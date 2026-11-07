@@ -62,7 +62,7 @@ export default function RouteDetail() {
     <section>
       <div className="mb-4 flex items-baseline justify-between gap-4">
         <h2 className="text-xl font-semibold text-ink">Saccos on this route</h2>
-        <span className="truncate text-sm text-muted md:hidden">{route.name}</span>
+        <span className="hidden truncate text-sm text-muted xs:block lg:hidden">{route.name}</span>
       </div>
       <div className="space-y-4">
         {route.saccos.map((s) => (
@@ -122,25 +122,27 @@ export default function RouteDetail() {
   if (desktop) {
     return (
       <div>
-        <div className="flex items-start gap-4">
+        <div className="flex flex-wrap items-start gap-x-4 gap-y-3">
           <RouteChip number={route.number} size="lg" />
-          <div className="min-w-0 flex-1">
-            <h1 className="text-[30px] font-semibold leading-[36px] text-ink">{route.name}</h1>
+          <div className="min-w-[240px] flex-1">
+            <h1 className="text-2xl font-semibold leading-tight text-ink xl:text-[30px] xl:leading-[36px]">{route.name}</h1>
             <p className="mt-0.5 text-base text-muted">
               {[route.via ? `via ${route.via}` : route.line, `${route.saccos.length} sacco${route.saccos.length === 1 ? '' : 's'}`, updated].filter(Boolean).join(' · ')}
             </p>
           </div>
-          <Button
-            variant={route.subscribed ? 'tint' : 'secondary'}
-            onClick={() => subMut.mutate()}
-            aria-pressed={route.subscribed}
-            className="px-5"
-          >
-            <Bell className="h-5 w-5" /> {route.subscribed ? 'Alerts on' : 'Alerts off'}
-          </Button>
-          <Button onClick={() => setReportOpen(true)} className="px-5">
-            <Plus className="h-5 w-5" /> Report
-          </Button>
+          <div className="flex shrink-0 gap-3">
+            <Button
+              variant={route.subscribed ? 'tint' : 'secondary'}
+              onClick={() => subMut.mutate()}
+              aria-pressed={route.subscribed}
+              className="px-5"
+            >
+              <Bell className="h-5 w-5" /> {route.subscribed ? 'Alerts on' : 'Alerts off'}
+            </Button>
+            <Button onClick={() => setReportOpen(true)} className="px-5">
+              <Plus className="h-5 w-5" /> Report
+            </Button>
+          </div>
         </div>
         {route.banner && (
           <div className="mt-6 space-y-3">
@@ -148,7 +150,7 @@ export default function RouteDetail() {
             {bannerCard}
           </div>
         )}
-        <div className="mt-8 grid gap-8 lg:grid-cols-2 lg:gap-6">
+        <div className="mt-8 grid gap-8 xl:grid-cols-2 xl:gap-6">
           {saccos}
           {intel}
         </div>
@@ -166,7 +168,7 @@ export default function RouteDetail() {
         subscribed={route.subscribed}
         onToggleBell={() => subMut.mutate()}
       />
-      <div className="space-y-8 px-4 pt-5">
+      <div className="mx-auto max-w-2xl space-y-8 px-4 pt-5">
         {route.banner && (
           <div className="space-y-3">
             <AlertBanner banner={route.banner} now={now} onClick={() => setShowBannerCard((v) => !v)} />
@@ -178,7 +180,7 @@ export default function RouteDetail() {
       </div>
       <Button
         onClick={() => setReportOpen(true)}
-        className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] right-4 z-30 h-14 rounded-full px-6 text-lg shadow-lg"
+        className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] right-4 z-30 h-14 rounded-full px-6 text-lg shadow-lg sm:right-[max(1rem,calc(50vw-20rem))]"
       >
         <Plus className="h-6 w-6" /> Report
       </Button>

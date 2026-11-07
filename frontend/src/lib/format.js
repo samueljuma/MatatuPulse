@@ -47,7 +47,8 @@ export function useMediaQuery(query) {
   return matches
 }
 
-export const useIsDesktop = () => useMediaQuery('(min-width: 768px)')
+// The sidebar layout needs ~1024px; tablets in portrait use the phone layout (centred).
+export const useIsDesktop = () => useMediaQuery('(min-width: 1024px)')
 
 const RECENT_KEY = 'mp_recent_routes'
 export function getRecent() {

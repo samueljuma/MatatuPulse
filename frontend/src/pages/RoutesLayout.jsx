@@ -30,11 +30,11 @@ function DesktopShell({ ctx }) {
       <header className="sticky top-0 z-20 border-b border-border bg-surface">
         <div className="flex h-16 items-center gap-6 px-6">
           <Link to="/routes" aria-label="MatatuPulse home"><Logo /></Link>
-          <SearchBar value={ctx.search} onChange={ctx.setSearch} tone="muted" className="h-11 w-full max-w-[480px]" />
+          <SearchBar value={ctx.search} onChange={ctx.setSearch} tone="muted" className="h-11 w-full min-w-0 max-w-[480px]" />
           <div className="ml-auto flex items-center gap-4">
-            <Link to="/signal" className="text-sm font-semibold text-primary hover:underline">Signal panel</Link>
-            <a href="/live-map.html" className="text-sm font-semibold text-primary hover:underline">Live map</a>
-            <span className="text-sm tabular-nums text-muted">{auth?.user?.phone_masked}</span>
+            <Link to="/signal" className="whitespace-nowrap text-sm font-semibold text-primary hover:underline">Signal panel</Link>
+            <a href="/live-map.html" className="whitespace-nowrap text-sm font-semibold text-primary hover:underline">Live map</a>
+            <span className="hidden whitespace-nowrap text-sm tabular-nums text-muted xl:inline">{auth?.user?.phone_masked}</span>
             <button
               type="button"
               onClick={() => setAuth(null)}
@@ -56,7 +56,7 @@ function DesktopShell({ ctx }) {
               {isLoading && <p className="px-5 py-6 text-sm text-muted">Loading routes…</p>}
               {routes?.length === 0 && <p className="px-5 py-6 text-sm text-muted">No route matches “{ctx.search}”.</p>}
               {routes?.map((r) => (
-                <RouteListItem key={r.id} route={r} selected={String(r.id) === id} />
+                <RouteListItem key={r.id} route={r} selected={String(r.id) === id} compact />
               ))}
             </div>
           </section>

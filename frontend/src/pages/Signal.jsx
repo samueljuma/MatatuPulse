@@ -33,22 +33,23 @@ export default function Signal() {
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-[1280px] px-4 py-6 md:px-8 md:py-8">
-        <header className="flex flex-wrap items-start gap-4">
-          <LogoMark size="lg" />
-          <div className="min-w-0 flex-1">
-            <h1 className="text-[26px] font-bold leading-tight text-ink md:text-[28px]">MatatuPulse Signal</h1>
-            <p className="mt-1 text-base text-muted">
+        <header className="flex flex-wrap items-start gap-x-4 gap-y-3">
+          <span className="sm:hidden"><LogoMark size="md" /></span>
+          <span className="hidden sm:block"><LogoMark size="lg" /></span>
+          <div className="min-w-0 flex-1 basis-[200px]">
+            <h1 className="text-xl font-bold leading-tight text-ink sm:text-[26px] md:text-[28px]">MatatuPulse Signal</h1>
+            <p className="mt-1 text-sm text-muted sm:text-base">
               Signal from the noise — how {data?.funnel.raw ?? 200} messy SMS become {data?.funnel.verified ?? 12} alerts you can trust.
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:gap-3">
             {auth?.user?.is_staff && (
               <Button variant="secondary" size="sm" onClick={replay} disabled={replaying} title="Wipe and replay the 200 seed SMS">
                 <RotateCcw className={`h-4 w-4 ${replaying ? 'animate-spin' : ''}`} /> {replaying ? 'Replaying…' : 'Replay demo'}
               </Button>
             )}
             <span
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-ink"
+              className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-ink sm:px-4 sm:py-2 sm:text-sm"
               title={dataUpdatedAt ? `Updated ${new Date(dataUpdatedAt).toLocaleTimeString()}` : undefined}
             >
               <span className={`h-2.5 w-2.5 rounded-full ${error ? 'bg-alert' : 'bg-fare-normal'}`} />
@@ -75,17 +76,17 @@ export default function Signal() {
                 </div>
                 <ul>
                   {(showAll ? data.verified_events : data.verified_events.slice(0, SHOW_VERIFIED)).map((e) => (
-                    <li key={e.id} className="flex items-center gap-4 border-b border-border px-5 py-4 last:border-b-0">
+                    <li key={e.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border px-4 py-4 last:border-b-0 sm:flex-nowrap sm:px-5">
                       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-alert-tint text-alert">
                         <TriangleAlert className="h-5 w-5" />
                       </span>
-                      <div className="min-w-0 flex-1">
+                      <div className="w-[calc(100%-3.5rem)] min-w-0 sm:w-auto sm:flex-1">
                         <p className="text-base font-semibold text-ink">{e.title}</p>
                         <p className="text-sm text-muted">
                           {e.ref} · {e.routes} · first report {clock(e.first_seen)} · verified {clock(e.verified_at)}
                         </p>
                       </div>
-                      <span className="shrink-0 rounded-full bg-alert px-2.5 py-0.5 text-sm font-semibold text-white">
+                      <span className="ml-14 shrink-0 rounded-full bg-alert px-2.5 py-0.5 text-sm font-semibold text-white sm:ml-0">
                         {e.reports} reports
                       </span>
                     </li>
@@ -155,9 +156,9 @@ function RawReports({ reports }) {
       </div>
       <ul className="max-h-[640px] overflow-y-auto">
         {reports.map((r) => (
-          <li key={r.id} className="flex items-start gap-3 border-b border-border px-5 py-3 last:border-b-0">
+          <li key={r.id} className="flex flex-wrap items-start gap-x-3 gap-y-1.5 border-b border-border px-4 py-3 last:border-b-0 sm:flex-nowrap sm:px-5">
             <MessageCircle className="mt-0.5 h-5 w-5 shrink-0 text-muted" />
-            <div className="min-w-0 flex-1">
+            <div className="w-[calc(100%-2rem)] min-w-0 sm:w-auto sm:flex-1">
               <p className={`break-words text-base ${r.is_spam ? 'text-muted line-through' : 'text-ink'}`}>{r.text}</p>
               <p className="text-sm text-muted">
                 {r.phone} · {clock(r.at)}
@@ -166,13 +167,13 @@ function RawReports({ reports }) {
             </div>
             {r.is_spam ? (
               <span
-                className="shrink-0 rounded-full bg-pending-tint px-2.5 py-0.5 text-sm font-semibold text-pending-text"
+                className="ml-8 shrink-0 rounded-full bg-pending-tint px-2.5 py-0.5 text-sm font-semibold text-pending-text sm:ml-0"
                 title={{ blocklist: 'Blocklisted words or link', unparseable: 'Nothing usable parsed', rate_limit: 'Over 5 reports in 10 min' }[r.spam_reason]}
               >
                 Spam
               </span>
             ) : r.event_ref ? (
-              <span className="shrink-0 rounded-full bg-primary-tint px-2.5 py-0.5 text-sm font-semibold text-primary">
+              <span className="ml-8 shrink-0 rounded-full bg-primary-tint px-2.5 py-0.5 text-sm font-semibold text-primary sm:ml-0">
                 → {r.event_ref} {r.event_label}
               </span>
             ) : null}
@@ -193,7 +194,23 @@ function AlertLog({ alerts }) {
   return (
     <section className="mt-6 overflow-hidden rounded-xl border border-border bg-surface">
       <h2 className="border-b border-border px-5 py-4 text-xl font-semibold text-ink">Alert log</h2>
-      <div className="overflow-x-auto">
+      <ul className="md:hidden">
+        {alerts.map((a) => (
+          <li key={a.id} className="border-t border-border px-4 py-3">
+            <div className="flex items-start justify-between gap-3">
+              <p className="font-semibold text-ink">{a.text}</p>
+              <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-sm font-semibold ${STATUS_CHIP[a.status] || STATUS_CHIP.Expired}`}>
+                {a.status}
+              </span>
+            </div>
+            <p className="mt-1 text-sm text-muted">
+              <span className="tabular-nums">{clock(a.sent_at)}</span> · {a.sent_to}
+            </p>
+          </li>
+        ))}
+        {alerts.length === 0 && <li className="border-t border-border px-4 py-6 text-center text-muted">No alerts sent yet.</li>}
+      </ul>
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full min-w-[720px] text-left">
           <thead className="bg-background text-sm text-muted">
             <tr>

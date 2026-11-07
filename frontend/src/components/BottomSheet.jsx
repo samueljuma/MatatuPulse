@@ -8,7 +8,7 @@ export default function BottomSheet({ open, onClose, title, subtitle, children }
   return (
     <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={title || 'Sheet'}>
       <div className="animate-fade-in absolute inset-0 bg-ink/50" onClick={onClose} />
-      <div className="animate-sheet-up absolute inset-x-0 bottom-0 max-h-[92vh] overflow-y-auto rounded-t-[20px] bg-surface px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-3">
+      <div className="animate-sheet-up absolute inset-x-0 bottom-0 mx-auto max-h-[92vh] max-w-2xl overflow-y-auto rounded-t-[20px] bg-surface px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-3 sm:px-6">
         <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-border" />
         {title && (
           <div className="mb-5 flex items-start justify-between gap-4">

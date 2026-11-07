@@ -24,11 +24,11 @@ export default function RoutesIndex() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-background px-6 pb-10 pt-6">
+    <div className="mx-auto min-h-[100dvh] max-w-2xl bg-background px-4 pb-10 pt-6 xs:px-6">
       <div className="flex items-center justify-between">
         <Logo />
-        <a href="/live-map.html" className="flex items-center gap-1.5 rounded-xl border border-border bg-surface px-3 py-2 text-sm font-semibold text-primary">
-          <Map className="h-4 w-4" /> Live map
+        <a href="/live-map.html" aria-label="Live map" className="flex shrink-0 items-center gap-1.5 rounded-xl border border-border bg-surface px-3 py-2 text-sm font-semibold text-primary">
+          <Map className="h-4 w-4" /> Map
         </a>
       </div>
       <h1 className="mt-8 text-[30px] font-bold leading-tight text-ink">Which route?</h1>

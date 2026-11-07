@@ -5,7 +5,7 @@ import RouteChip from './RouteChip'
 export default function TopBar({ route, subtitle, onBack, subscribed, onToggleBell, bellBusy }) {
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-surface">
-      <div className="flex items-center gap-3 px-4 py-3">
+      <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-3">
         {onBack && (
           <button type="button" onClick={onBack} aria-label="Back to routes" className="-ml-1 rounded-full p-1 text-ink hover:bg-background">
             <ArrowLeft className="h-6 w-6" />

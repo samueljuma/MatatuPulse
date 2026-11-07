@@ -3,6 +3,8 @@
 export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
+    // xs = 380px: below it are small phones (iPhone SE, small Android).
+    screens: { xs: '380px', sm: '640px', md: '768px', lg: '1024px', xl: '1280px', '2xl': '1536px' },
     extend: {
       colors: {
         primary: { DEFAULT: '#0F766E', tint: '#CCFBF1', dark: '#115E59' },

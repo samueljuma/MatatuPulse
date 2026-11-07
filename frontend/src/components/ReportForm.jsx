@@ -64,7 +64,7 @@ export default function ReportForm({ route, onSubmit, onCancel, submitting, erro
       )}
 
       {isFare && (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-[1fr_auto] md:gap-6">
+        <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 md:grid-cols-[1fr_auto] md:gap-6">
           <Select
             id="sacco"
             label="Sacco"

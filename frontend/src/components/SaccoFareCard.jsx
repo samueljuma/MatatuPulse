@@ -7,11 +7,11 @@ export default function SaccoFareCard({ sacco, now }) {
   const range = state === 'normal' && max && max > fare
   const up = state === 'up' || state === 'down'
   return (
-    <div className="flex items-start justify-between gap-4 rounded-xl border border-border bg-surface px-5 py-4">
-      <div className="min-w-0">
-        <p className="text-base font-semibold text-ink">{name}</p>
-        {up && (
-          <>
+    <div className="rounded-xl border border-border bg-surface px-4 py-4 xs:px-5">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-base font-semibold text-ink">{name}</p>
+          {up && (
             <div className="mt-1 flex items-center gap-2">
               <span className="text-sm text-muted line-through">KES {usual}</span>
               <span className="inline-flex items-center gap-0.5 rounded-full bg-fare-up-tint px-2 py-0.5 text-xs font-semibold text-fare-up-text">
@@ -19,32 +19,35 @@ export default function SaccoFareCard({ sacco, now }) {
                 {delta >= 0 ? `+${delta}` : delta}
               </span>
             </div>
-            <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-muted">
-              <CircleCheck className="h-4 w-4 text-primary" strokeWidth={2} />
-              Verified by {reporters} commuters · {timeAgo(updated, now)}
+          )}
+          {state === 'normal' && (
+            <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-fare-normal-text">
+              <span className="h-2 w-2 rounded-full bg-fare-normal" /> {range ? 'Usual fare range' : 'Usual fare'}
             </p>
-          </>
-        )}
-        {state === 'normal' && (
-          <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-fare-normal-text">
-            <span className="h-2 w-2 rounded-full bg-fare-normal" /> {range ? 'Usual fare range' : 'Usual fare'}
-          </p>
-        )}
-        {state === 'pending' && (
-          <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-pending-text">
-            <span className="h-2 w-2 rounded-full bg-pending" /> Pending · {reporters} {reporters === 1 ? 'report' : 'reports'}
-          </p>
-        )}
+          )}
+          {state === 'pending' && (
+            <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-pending-text">
+              <span className="h-2 w-2 rounded-full bg-pending" /> Pending · {reporters} {reporters === 1 ? 'report' : 'reports'}
+            </p>
+          )}
+        </div>
+        <p
+          className={`shrink-0 whitespace-nowrap text-2xl font-bold tabular-nums xs:text-28 ${
+            up ? 'text-fare-up' : state === 'pending' ? 'text-pending-text' : 'text-ink'
+          }`}
+        >
+          KES {fare}
+          {range ? `–${max}` : ''}
+          {state === 'pending' ? '?' : ''}
+        </p>
       </div>
-      <p
-        className={`shrink-0 whitespace-nowrap text-28 tabular-nums ${
-          up ? 'text-fare-up' : state === 'pending' ? 'text-pending-text' : 'text-ink'
-        }`}
-      >
-        KES {fare}
-        {range ? `–${max}` : ''}
-        {state === 'pending' ? '?' : ''}
-      </p>
+      {up && (
+        // Full width, so it never gets squeezed by the fare on narrow screens.
+        <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-muted">
+          <CircleCheck className="h-4 w-4 shrink-0 text-primary" strokeWidth={2} />
+          Verified by {reporters} commuters · {timeAgo(updated, now)}
+        </p>
+      )}
     </div>
   )
 }

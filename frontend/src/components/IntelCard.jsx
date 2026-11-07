@@ -34,7 +34,7 @@ export default function IntelCard({ event, now, onVote, voting }) {
           {event.confirmations} confirmed
           {!verified && event.needed > 0 && ` · ${event.needed} more to verify`}
         </p>
-        <div className="grid grid-cols-2 gap-3 md:flex md:shrink-0">
+        <div className="grid grid-cols-1 gap-2 xs:grid-cols-2 xs:gap-3 md:flex md:shrink-0">
           <Button
             variant={mine === 'still' ? 'tint' : 'secondary'}
             size="sm"
