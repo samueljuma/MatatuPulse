@@ -170,6 +170,10 @@ STORAGES = {
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Send only our origin (never paths) to other sites. OpenStreetMap blocks map tiles requested
+# without a Referer, which Django's default ("same-origin") would cause.
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+
 CORS_ALLOWED_ORIGINS = env_list("CORS_ALLOWED_ORIGINS", "http://localhost:5173")
 CORS_ALLOW_ALL_ORIGINS = DEBUG and env_bool("CORS_ALLOW_ALL", True)
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS") or [

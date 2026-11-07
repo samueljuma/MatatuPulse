@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- OSM tile servers require a Referer; send our origin only. -->
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
   <title>MatatuPulse · Live map</title>
   <meta name="theme-color" content="#0F766E" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -546,7 +548,7 @@
       .setView(NAIROBI, 11);
     L.control.zoom({ position: "bottomright" }).addTo(map);
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
