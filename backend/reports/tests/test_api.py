@@ -104,7 +104,7 @@ class MapApiTests(APITestCase):
         self.assertEqual(len(routes), 5 + 97)
         r100 = next(r for r in routes if r["id"] == self.r100.id)
         self.assertEqual((r100["start"], r100["end"]), ("Odeon", "Githurai 45"))
-        self.assertEqual(len(r100["path"]), 7)
+        self.assertGreater(len(r100["path"]), 100)  # road-following, not stage-to-stage straight lines
         self.assertIsNotNone(r100["start_lat"])
         real = next(r for r in routes if r["route_number"] == "100" and not r["is_demo"])
         self.assertEqual((real["line"], real["base_fare_min"], real["base_fare_max"]), ("A Line", 80, 120))

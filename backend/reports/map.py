@@ -4,6 +4,10 @@ Shapes match what the map page reads: routes with endpoints and a path, active i
 coordinates, and a route's current fare range. No phone numbers or user data are exposed.
 """
 
+import json
+from functools import lru_cache
+from pathlib import Path
+
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -24,6 +28,13 @@ SEVERITY = {
     ("accident_police", "police"): "low",
     ("fare_hike", ""): "low",
 }
+
+
+@lru_cache(maxsize=1)
+def demo_geometry():
+    """Road-following paths for the demo routes (built by scripts/build_demo_geometry.py)."""
+    path = Path(__file__).resolve().parent.parent / "transit" / "data" / "demo_route_geometry.json"
+    return json.loads(path.read_text()) if path.exists() else {}
 
 
 def _stages(route):
@@ -49,7 +60,6 @@ def map_routes(request):
         stages = _stages(r)
         start, end = _endpoints(r, stages)
         saccos = list(r.saccos.all())
-        located = [s for s in stages if s.lat is not None and s.lon is not None]
         first, last = (stages[0], stages[-1]) if stages else (None, None)
         item = {
             "id": r.id,
@@ -68,10 +78,12 @@ def map_routes(request):
             "end_lon": last.lon if last else None,
             "is_demo": r.is_demo,
         }
-        # Multi-stage (demo) routes get a path through their stages. Two-stage imported routes are
-        # left to the map's embedded road geometry (keyed "start|end").
-        if len(located) > 2:
-            item["path"] = [[s.lat, s.lon] for s in located]
+        # Demo routes get their stored road path. Imported routes are drawn from the map page's
+        # embedded OSRM geometry (keyed "start|end"); no straight lines between stages.
+        geom = demo_geometry().get(r.number) if r.is_demo else None
+        if geom:
+            item["path"] = geom["path"]
+            item["distance_km"] = geom["distance_km"]
         out.append(item)
     return Response(out)
 
