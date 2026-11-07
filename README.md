@@ -113,23 +113,48 @@ cd frontend && npm run build && npm run lint
   - `POST /api/sms/delivery` receives delivery reports. Set `THRIVEWAVE_CALLBACK_URL` to it.
   - `POST /api/sms/inbound` receives commuter SMS (`from`/`msisdn` and `text`/`message`).
 
-## Deploy (Fly.io, reusing `mat3route-api` and `mat3route-db`)
+## Deploy (RumptyCloud, one container)
 
-```bash
-cd backend
-fly secrets set SECRET_KEY=$(python -c "import secrets;print(secrets.token_urlsafe(50))") \
-  THRIVEWAVE_API_KEY=... THRIVEWAVE_SENDER_ID=... \
-  SMS_WEBHOOK_TOKEN=$(python -c "import secrets;print(secrets.token_urlsafe(24))") \
-  OTP_TEST_NUMBERS=+254712345678 \
-  CORS_ALLOWED_ORIGINS=https://<your-frontend>.vercel.app
-# DATABASE_URL is already set by the mat3route-db attachment
-fly deploy        # release_command migrates and seeds routes (no SMS replay)
-fly ssh console -C "python manage.py replay_sms"   # load the pitch scenario
-```
+The root `Dockerfile` builds the React app and then the Django image. Django serves the app and the
+API on one origin: `/api/*` is the API, `/admin/` is the admin, and every other path returns
+`index.html`. So there's no CORS setup and no build-time API URL. On every boot, `backend/start.sh`
+runs `migrate` and then `seed_demo --no-replay` (both safe to re-run), then starts gunicorn on `$PORT`.
 
-Django's tables (`transit_route`, `reports_event` …) sit alongside the old FastAPI tables in the
-same database without clashing.
+1. **Database:** in the console, create a PostgreSQL database and copy its **internal** connection
+   string from the Connection tab.
+2. **Deployment:** connect this GitHub repo with these settings:
+   - root directory: the repo root (where the `Dockerfile` is)
+   - build: Dockerfile
+   - port: `8080`
+   - health check path: `/health`
+   - plan: Starter or above for the demo, because free apps sleep when idle
+3. **Environment variables** (set them before the first build):
 
-**Front-end (Vercel):** set the root directory to `MatatuPulse/frontend` and
-`VITE_API_URL=https://mat3route-api.fly.dev`. SPA rewrites are in `vercel.json` (and
-`public/_redirects` for Netlify).
+   | Variable | Value |
+   |---|---|
+   | `DATABASE_URL` | the internal connection string from step 1 |
+   | `SECRET_KEY` | `python -c "import secrets;print(secrets.token_urlsafe(50))"` |
+   | `DEBUG` | `false` |
+   | `ALLOWED_HOSTS` | the app's hostname, e.g. `matatupulse.<platform-domain>` |
+   | `DEMO_MODE` | `true` (enables **Replay demo** on `/signal`) |
+   | `DEMO_STAFF_PHONE` | `+254712345678` (or your own number) |
+   | `OTP_TEST_NUMBERS` | numbers that log in with `4729` without an SMS, e.g. the staff phone |
+   | `SMS_PROVIDER` | `thrivewave` |
+   | `THRIVEWAVE_API_KEY`, `THRIVEWAVE_SENDER_ID` | from ThriveWave |
+   | `SMS_WEBHOOK_TOKEN` | `python -c "import secrets;print(secrets.token_urlsafe(24))"` |
+   | `THRIVEWAVE_CALLBACK_URL` | `https://<host>/api/sms/delivery?token=<SMS_WEBHOOK_TOKEN>` (optional) |
+
+4. **Deploy**, then open `https://<host>/health`. It should return `{"ok": true}`.
+5. **Load the pitch scenario:** sign in with the staff phone, open `/signal`, and press
+   **Replay demo**. Press it again before each rehearsal; it wipes and replays only the
+   reports, events and alerts.
+
+**Notes**
+- **Backups:** RumptyCloud has no automatic database backups yet. Before demo day, run
+  `pg_dump "<external connection string>?sslmode=require" > backup.sql`.
+- **HTTPS:** the platform terminates HTTPS. Set `SECURE_SSL_REDIRECT=true` only if requests reach the
+  app with `X-Forwarded-Proto: https`; otherwise it causes a redirect loop.
+- **Admin:** create an admin user with `createsuperuser` from a machine that can reach the database.
+  `CSRF_TRUSTED_ORIGINS` defaults to `https://<each ALLOWED_HOSTS entry>`.
+- **Local copy of the container:**
+  `docker build -t matatupulse . && docker run --rm -p 8080:8080 --env-file backend/.env -e DEBUG=false -e ALLOWED_HOSTS=localhost matatupulse`

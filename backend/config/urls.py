@@ -1,9 +1,9 @@
 from django.contrib import admin
-from django.http import JsonResponse
-from django.urls import include, path
+from django.urls import include, path, re_path
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from accounts import views as accounts
+from config.spa import spa_index
 from messaging import views as messaging
 from reports import views as reports
 from transit import views as transit
@@ -26,6 +26,7 @@ api = [
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", lambda r: JsonResponse({"service": "MatatuPulse API", "ok": True})),
     path("api/", include(api)),
+    # Everything else is the React app (its files are served by WhiteNoise from FRONTEND_DIST).
+    re_path(r"^(?!api/|admin/|static/).*$", spa_index),
 ]
