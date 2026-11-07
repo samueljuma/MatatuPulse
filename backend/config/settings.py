@@ -57,6 +57,9 @@ OTP_MAX_PER_HOUR = int(os.environ.get("OTP_MAX_PER_HOUR", 5))
 OTP_MAX_ATTEMPTS = int(os.environ.get("OTP_MAX_ATTEMPTS", 5))
 
 # --- SMS: console (logs only) or thrivewave
+# Master kill switch (from the Mat3Route team's backend): SMS_ENABLED=false stops every real SMS
+# (OTPs fail with 503, alerts are logged as failed). On by default so deployed logins keep working.
+SMS_ENABLED = env_bool("SMS_ENABLED", True)
 SMS_PROVIDER = os.environ.get("SMS_PROVIDER", "console").strip().strip(",;").lower()
 THRIVEWAVE_API_KEY = os.environ.get("THRIVEWAVE_API_KEY", "")
 THRIVEWAVE_BASE_URL = os.environ.get("THRIVEWAVE_BASE_URL", "https://sms.thrivevas.com")
@@ -67,7 +70,7 @@ THRIVEWAVE_TIMEOUT_SECONDS = float(os.environ.get("THRIVEWAVE_TIMEOUT_SECONDS", 
 # Shared secret for /api/sms/inbound and /api/sms/delivery (?token=...).
 SMS_WEBHOOK_TOKEN = os.environ.get("SMS_WEBHOOK_TOKEN", "")
 
-# Never send real SMS from the test suite, whatever .env says.
+# Never send real SMS or touch a real database from the test suite, whatever .env says.
 if len(sys.argv) > 1 and sys.argv[1] == "test":
     SMS_PROVIDER = "console"
     SMS_WEBHOOK_TOKEN = "test-webhook-token"
@@ -125,6 +128,15 @@ DATABASES = {
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}", conn_max_age=600
     )
 }
+
+# Tests never touch the database in DATABASE_URL (it may be the live one); use local SQLite
+# unless TEST_DATABASE_URL is set on purpose.
+if len(sys.argv) > 1 and sys.argv[1] == "test":
+    DATABASES = {
+        "default": dj_database_url.parse(os.environ["TEST_DATABASE_URL"])
+        if os.environ.get("TEST_DATABASE_URL")
+        else {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR / "test-db.sqlite3"}
+    }
 
 AUTH_USER_MODEL = "accounts.User"
 

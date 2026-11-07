@@ -60,8 +60,8 @@ export default function Login() {
       <AuthCard>
         <form onSubmit={submit} className="px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] md:p-0">
           <div className="mb-6 hidden md:block">
-            <h2 className="text-xl font-semibold text-ink">Sign in</h2>
-            <p className="mt-1 text-sm text-muted">No password. We'll SMS you a 4-digit code.</p>
+            <h2 className="text-xl font-semibold text-ink">Sign in or register</h2>
+            <p className="mt-1 text-sm text-muted">No password. We'll SMS you a 4-digit code. New numbers get an account automatically.</p>
           </div>
           <PhoneInput
             id="phone"
@@ -75,7 +75,7 @@ export default function Login() {
           {error ? (
             <p className="mt-2 text-sm font-medium text-alert">{error}</p>
           ) : (
-            <p className="mt-2 text-sm font-medium text-muted md:hidden">We'll SMS you a 4-digit code.</p>
+            <p className="mt-2 text-sm font-medium text-muted md:hidden">We'll SMS you a 4-digit code. New here? That's all it takes to register.</p>
           )}
           <Button type="submit" block className="mt-5 md:mt-6" disabled={busy}>
             {busy ? 'Sending code…' : 'Continue'}

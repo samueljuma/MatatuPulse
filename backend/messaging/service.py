@@ -2,6 +2,7 @@
 
 import logging
 
+from django.conf import settings
 from django.utils import timezone
 
 from accounts.models import normalize_phone
@@ -16,6 +17,11 @@ def send_sms(to, text, kind="alert", provider=None):
     provider = provider or get_provider()
     phone = normalize_phone(to) or str(to)
     msg = OutboundSms.objects.create(to=phone, text=text, kind=kind, provider=provider.name)
+    if not settings.SMS_ENABLED and provider.name != "console":
+        msg.status, msg.error = "failed", "SMS sending is disabled (SMS_ENABLED=false)"
+        msg.save(update_fields=["status", "error"])
+        log.warning("[sms] disabled; not sending %s to %s", kind, phone)
+        return msg
     try:
         result = provider.send(phone, text)
     except Exception as exc:  # a provider bug must never break a report or a login

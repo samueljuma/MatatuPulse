@@ -90,3 +90,35 @@ class ApiTests(APITestCase):
     def test_replay_staff_only(self):
         self.login()  # +254712345678 is not staff in tests (seed_demo makes it staff)
         self.assertEqual(self.client.post("/api/demo/replay").status_code, 403)
+
+
+class MapApiTests(APITestCase):
+    def setUp(self):
+        seed_transit()
+        import_routes()
+        replay()
+        self.r100 = Route.objects.get(number="100", is_demo=True)
+
+    def test_map_is_public_and_has_coordinates(self):
+        routes = self.client.get("/api/map/routes").json()
+        self.assertEqual(len(routes), 5 + 97)
+        r100 = next(r for r in routes if r["id"] == self.r100.id)
+        self.assertEqual((r100["start"], r100["end"]), ("Odeon", "Githurai 45"))
+        self.assertEqual(len(r100["path"]), 7)
+        self.assertIsNotNone(r100["start_lat"])
+        real = next(r for r in routes if r["route_number"] == "100" and not r["is_demo"])
+        self.assertEqual((real["line"], real["base_fare_min"], real["base_fare_max"]), ("A Line", 80, 120))
+        self.assertNotIn("path", real)  # the map uses its embedded road geometry
+
+    def test_incidents_have_pins_and_no_phone_numbers(self):
+        incidents = self.client.get("/api/map/incidents").json()
+        ngara = next(i for i in incidents if i["stage"] == "Ngara")
+        self.assertEqual((ngara["severity"], ngara["status"]), ("high", "verified"))
+        self.assertIsNotNone(ngara["latitude"])
+        self.assertNotIn("+254", str(incidents))
+
+    def test_fare_reflects_verified_hikes(self):
+        fare = self.client.get(f"/api/map/routes/{self.r100.id}/fare").json()
+        self.assertEqual((fare["usual_min"], fare["fare_max"]), (70, 120))
+        self.assertGreater(fare["multiplier"], 1)
+        self.assertTrue(any("Thika Road Flyers" in r for r in fare["reasons"]))

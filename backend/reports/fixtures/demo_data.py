@@ -41,6 +41,33 @@ STAGE_ALIASES = {
     "Githurai 45": ["githurai 45", "g45", "githurai", "g 45"],
 }
 
+# Approximate coordinates for the demo stages (for the live map). Real stages get theirs from
+# transit/data/nairobi_locations.json; these fill in the ones that file doesn't have.
+STAGE_COORDS = {
+    "Kencom": (-1.2856, 36.8253),
+    "Moi Ave": (-1.2836, 36.8259),
+    "Museum Hill": (-1.2741, 36.8136),
+    "Westlands": (-1.2676, 36.8108),
+    "Kangemi": (-1.2667, 36.7486),
+    "Junction": (-1.2989, 36.7627),
+    "Kawangware": (-1.2843, 36.7470),
+    "Ambassadeur": (-1.2854, 36.8282),
+    "Muthurwa": (-1.2876, 36.8321),
+    "Makadara": (-1.2951, 36.8667),
+    "Donholm": (-1.2966, 36.8892),
+    "Buruburu": (-1.2858, 36.8783),
+    "Prestige": (-1.2994, 36.7872),
+    "Karen": (-1.3197, 36.7073),
+    "Ngong": (-1.3527, 36.6699),
+    "Odeon": (-1.2828, 36.8262),
+    "Ngara": (-1.2737, 36.8236),
+    "Pangani": (-1.2681, 36.8371),
+    "Muthaiga": (-1.2489, 36.8398),
+    "Roysambu": (-1.2183, 36.8878),
+    "Kasarani": (-1.2213, 36.8968),
+    "Githurai 45": (-1.2007, 36.9123),
+}
+
 SACCOS = {
     "100": [("Thika Road Flyers", 70), ("Mwangaza Sacco", 80), ("Haraka Shuttle", 70), ("Zuri Line", 70)],
     "23": [("Westlink Sacco", 60), ("Kangemi Express", 70)],

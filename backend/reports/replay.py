@@ -19,7 +19,10 @@ VOTER_PHONES = ["+254700000101", "+254700000102"]
 def seed_transit():
     stages = {}
     for name, aliases in demo_data.STAGE_ALIASES.items():
-        stage, _ = Stage.objects.update_or_create(name=name, defaults={"aliases": aliases})
+        defaults = {"aliases": aliases}
+        if name in demo_data.STAGE_COORDS:
+            defaults["lat"], defaults["lon"] = demo_data.STAGE_COORDS[name]
+        stage, _ = Stage.objects.update_or_create(name=name, defaults=defaults)
         stages[name] = stage
     for number, name, via, stage_names in demo_data.ROUTES:
         route, _ = Route.objects.update_or_create(

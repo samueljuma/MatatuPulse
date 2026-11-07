@@ -3,7 +3,7 @@ import json
 import urllib.error
 from unittest import mock
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from rest_framework.test import APIClient
 
 from messaging.models import OutboundSms
@@ -97,3 +97,13 @@ class SendAndDlrTests(TestCase):
         msg = send_sms("0712345678", "x", provider=Boom())
         self.assertEqual(msg.status, "failed")
         self.assertEqual(OutboundSms.objects.count(), 1)
+
+
+class KillSwitchTests(TestCase):
+    @override_settings(SMS_ENABLED=False)
+    def test_disabled_never_calls_the_provider(self):
+        with mock.patch("urllib.request.urlopen") as m:
+            msg = send_sms("0712345678", "hi", provider=provider())
+        m.assert_not_called()
+        self.assertEqual(msg.status, "failed")
+        self.assertIn("SMS_ENABLED=false", msg.error)

@@ -33,6 +33,7 @@ function DesktopShell({ ctx }) {
           <SearchBar value={ctx.search} onChange={ctx.setSearch} tone="muted" className="h-11 w-full max-w-[480px]" />
           <div className="ml-auto flex items-center gap-4">
             <Link to="/signal" className="text-sm font-semibold text-primary hover:underline">Signal panel</Link>
+            <a href="/live-map.html" className="text-sm font-semibold text-primary hover:underline">Live map</a>
             <span className="text-sm tabular-nums text-muted">{auth?.user?.phone_masked}</span>
             <button
               type="button"

@@ -1,6 +1,6 @@
 .DS_Store
 backend/.venv/
-backend/db.sqlite3
+backend/*.sqlite3
 backend/staticfiles/
 __pycache__/
 *.pyc
